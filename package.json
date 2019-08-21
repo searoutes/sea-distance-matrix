@@ -1,0 +1,27 @@
+{
+  "name": "distance-matrix",
+  "version": "1.0.0",
+  "description": "From a list of UNLOCODES, get matrix of distances between all pair of ports.",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/**/*.js",
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "mocha": "^6.2.0",
+    "request": "^2.88.0",
+    "should": "^13.2.3"
+  },
+  "repository": "git+https://github.com/searoutes/distance-matrix.git",
+  "bugs": {
+    "url": "https://github.com/searoutes/distance-matrix/issues"
+  },
+  "homepage": "https://github.com/searoutes/distance-matrix#readme"
+}
