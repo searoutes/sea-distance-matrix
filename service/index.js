@@ -69,9 +69,10 @@ async function promiseToAddDistance (structure, batchSize){
 }
 
 async function promiseToGetDistanceMatrixFromLocodes(locode){
-    var coordinates = await data.promiseToListCoordinates(locode, 50)
+    var batchSize = 50
+    var coordinates = await data.promiseToListCoordinates(locode, batchSize)
     var structure = out.getObjectStructure(coordinates)
-    structure = await promiseToAddDistance(structure, 50)
+    structure = await promiseToAddDistance(structure, batchSize)
 
     return structure;
 }
