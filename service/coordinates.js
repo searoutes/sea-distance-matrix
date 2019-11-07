@@ -9,14 +9,14 @@ async function promiseToGetCoordinates(code){
                 'locode': code 
             },
             headers: { 
-                'x-api-key': process.env.X_API_KEY 
+                'x-api-key': process.env.X_API_KEY
             } 
         };
         let body = await rqPromise.promiseDoRequest(options);
         return body;
     }
     catch(err){
-        console.error(err);
+        console.error('geo:', err);
     }
 }
 

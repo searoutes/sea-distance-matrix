@@ -1,21 +1,22 @@
 const distance = require("./distance")
 const data = require("./coordinates")
 const out = require("./output")
+const fs = require('fs')
 const { checkEnvVars } = require('../scripts/utils');
 
 checkEnvVars([ 'X_API_KEY' ]);
 
-async function promiseToModifyElement (element, body){
+function modifyElement (element, body){
     var total = 0
-    if (body && body.getRouteJson){
-        for (var i = 0; i < body.getRouteJson.length; i++){
-            total += body.getRouteJson[i].distance
+    if (body && body.features){
+        for (var i = 0; i < body.features.length; i++){
+            total += body.features[i].properties.distance
         }
-        element.distance = total
+        element.distance = total/1852
         total = 0
     }
     else if (body){
-        element.message = body.message
+        element.messages = body.messages
     }
     return element
 }
@@ -27,7 +28,7 @@ async function promiseToProcessBatch (structure){
             if (element.from.locode != element.to.locode){
                 let body = await distance.promiseToGetDistance(element.from.lon, element.from.lat, element.to.lon, element.to.lat);
                 if (body)
-                    element = await promiseToModifyElement(element, body)
+                    element = modifyElement(element, body)
                 else {
                     recursive++
                     if (recursive > 3){
@@ -59,6 +60,7 @@ async function promiseToAddDistance (structure, batchSize){
     }
     structure = []
     for (var i = 0; batches[i]; i++){
+        console.log("Processing batch ", i+1)
         batches[i] = await promiseToProcessBatch(batches[i])
         for (var j = 0; batches[i][j]; j++)
             structure.push(batches[i][j])
@@ -69,12 +71,15 @@ async function promiseToAddDistance (structure, batchSize){
 }
 
 async function promiseToGetDistanceMatrixFromLocodes(locode){
-    var batchSize = 50
+    var batchSize = 25  // don't modify, it won't increase the speed of computing
     var coordinates = await data.promiseToListCoordinates(locode, batchSize)
     var structure = out.getObjectStructure(coordinates)
     structure = await promiseToAddDistance(structure, batchSize)
+    console.log('Done.')
 
-    return structure;
+    fs.writeFile('matrix.json', JSON.stringify(structure, null, 2), err => {
+        if(err) return console.error(err);
+    });
 }
 
 module.exports = {promiseToGetDistanceMatrixFromLocodes}
