@@ -16,18 +16,18 @@ async function promiseToGetDistance (lon1, lat1, lon2, lat2){
     try{
         var options = { 
             method: 'GET',
-            url: process.env.ROUTING_API_URL + '/lon:' + lon1 + 'lat:' + lat1 + '/lon:' + lon2 + 'lat:' + lat2,
+            url: process.env.ROUTING_API_URL + lon1 + ',' + lat1 + ';' + lon2 + ',' + lat2,
             qs: {},
             json: true,
             headers: { 
-                'x-api-key': process.env.X_API_KEY 
+                'x-api-key': process.env.X_API_KEY
             } 
         };
         let body = await promiseDoRequest(options);
         return (body);
     }
     catch (err){
-        console.error(err);
+        console.error('route:', err);
     }
 }
 
